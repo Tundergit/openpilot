@@ -20,6 +20,9 @@ class CarInterface(CarInterfaceBase):
     ret.radarOffCan = True
     ret.safetyModel = car.CarParams.SafetyModel.subaru
 
+    # Subaru port is a community feature, since we don't own one to test
+    ret.communityFeature = True
+
     # force openpilot to fake the stock camera, since car harness is not supported yet and old style giraffe (with switches)
     # was never released
     ret.enableCamera = True
@@ -63,7 +66,7 @@ class CarInterface(CarInterfaceBase):
     be.type = car.CarState.ButtonEvent.Type.accelCruise
     buttonEvents.append(be)
 
-    events = self.create_common_events(ret, extra_gears=[car.CarState.GearShifter.unknown])
+    events = self.create_common_events(ret)
 
     if ret.cruiseState.enabled and not self.cruise_enabled_prev:
       events.append(create_event('pcmEnable', [ET.ENABLE]))

@@ -33,16 +33,22 @@
 #define STATUS_WARNING 3
 #define STATUS_ALERT 4
 
+#define NET_CONNECTED 0
+#define NET_DISCONNECTED 1
+#define NET_ERROR 2
+
 #define ALERTSIZE_NONE 0
 #define ALERTSIZE_SMALL 1
 #define ALERTSIZE_MID 2
 #define ALERTSIZE_FULL 3
 
-#define COLOR_BLACK_ALPHA nvgRGBA(0, 0, 0, 85)
+#define COLOR_BLACK nvgRGBA(0, 0, 0, 255)
+#define COLOR_BLACK_ALPHA(x) nvgRGBA(0, 0, 0, x)
 #define COLOR_WHITE nvgRGBA(255, 255, 255, 255)
-#define COLOR_WHITE_ALPHA nvgRGBA(255, 255, 255, 85)
+#define COLOR_WHITE_ALPHA(x) nvgRGBA(255, 255, 255, x)
 #define COLOR_YELLOW nvgRGBA(218, 202, 37, 255)
 #define COLOR_RED nvgRGBA(201, 34, 49, 255)
+#define COLOR_OCHRE nvgRGBA(218, 111, 37, 255)
 
 #ifndef QCOM
   #define UI_60FPS
@@ -155,6 +161,7 @@ typedef struct UIScene {
   int paTemp;
   int hwType;
   int satelliteCount;
+  uint8_t athenaStatus;
 } UIScene;
 
 typedef struct {
@@ -255,9 +262,11 @@ typedef struct UIState {
   int longitudinal_control_timeout;
   int limit_set_speed_timeout;
   int hardware_timeout;
+  int last_athena_ping_timeout;
 
   bool controls_seen;
 
+  uint64_t last_athena_ping;
   int status;
   bool is_metric;
   bool longitudinal_control;

@@ -87,7 +87,6 @@ static void draw_chevron(UIState *s, float x_in, float y_in, float sz,
     nvgMoveTo(s->vg, x+(sz*1.35)+g_xo, y+sz+g_yo);
     nvgLineTo(s->vg, x, y-g_xo);
     nvgLineTo(s->vg, x-(sz*1.35)-g_xo, y+sz+g_yo);
-    nvgLineTo(s->vg, x+(sz*1.35)+g_xo, y+sz+g_yo);
     nvgClosePath(s->vg);
   }
   nvgFillColor(s->vg, glowColor);
@@ -99,7 +98,6 @@ static void draw_chevron(UIState *s, float x_in, float y_in, float sz,
     nvgMoveTo(s->vg, x+(sz*1.25), y+sz);
     nvgLineTo(s->vg, x, y);
     nvgLineTo(s->vg, x-(sz*1.25), y+sz);
-    nvgLineTo(s->vg, x+(sz*1.25), y+sz);
     nvgClosePath(s->vg);
   }
   nvgFillColor(s->vg, fillColor);
@@ -121,7 +119,7 @@ static void draw_lead(UIState *s, float d_rel, float v_rel, float y_rel){
       fillAlpha = (int)(fmin(fillAlpha, 255));
     }
     draw_chevron(s, d_rel, y_rel, 25,
-                 nvgRGBA(201, 34, 49, fillAlpha), nvgRGBA(218, 202, 37, 255));
+                 nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
 }
 
 static void ui_draw_lane_line(UIState *s, const model_path_vertices_data *pvd, NVGcolor color) {
@@ -260,7 +258,7 @@ static void ui_draw_track(UIState *s, bool is_mpc, track_vertices_data *pvd) {
   } else {
     // Draw white vision track
     track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
-      nvgRGBA(255, 255, 255, 255), nvgRGBA(255, 255, 255, 0));
+      COLOR_WHITE, COLOR_WHITE_ALPHA(0));
   }
 
   nvgFillPaint(s->vg, track_bg);
@@ -456,7 +454,7 @@ static void ui_draw_vision_maxspeed(UIState *s) {
   if (is_set_over_limit) {
     nvgFillColor(s->vg, nvgRGBA(218, 111, 37, 180));
   } else {
-    nvgFillColor(s->vg, nvgRGBA(0, 0, 0, 100));
+    nvgFillColor(s->vg, COLOR_BLACK_ALPHA(100));
   }
   nvgFill(s->vg);
 
@@ -464,39 +462,39 @@ static void ui_draw_vision_maxspeed(UIState *s) {
   nvgBeginPath(s->vg);
   nvgRoundedRect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h, 20);
   if (is_set_over_limit) {
-    nvgStrokeColor(s->vg, nvgRGBA(218, 111, 37, 255));
+    nvgStrokeColor(s->vg, COLOR_OCHRE);
   } else if (is_speedlim_valid && !s->is_ego_over_limit) {
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 255));
+    nvgStrokeColor(s->vg, COLOR_WHITE);
   } else if (is_speedlim_valid && s->is_ego_over_limit) {
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 20));
+    nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(20));
   } else {
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 100));
+    nvgStrokeColor(s->vg, COLOR_WHITE_ALPHA(100));
   }
   nvgStrokeWidth(s->vg, 10);
   nvgStroke(s->vg);
 
   // Draw "MAX" Text
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  nvgFontFace(s->vg, "sans-regular");
+  nvgFontFaceId(s->vg,  s->font_sans_regular);
   nvgFontSize(s->vg, 26*2.5);
   if (is_cruise_set) {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
   } else {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
+    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(100));
   }
   nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 148, "MAX", NULL);
 
   // Draw Speed Text
-  nvgFontFace(s->vg, "sans-bold");
+  nvgFontFaceId(s->vg, s->font_sans_bold);
   nvgFontSize(s->vg, 48*2.5);
   if (is_cruise_set) {
     snprintf(maxspeed_str, sizeof(maxspeed_str), "%d", maxspeed_calc);
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+    nvgFillColor(s->vg, COLOR_WHITE);
     nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 242, maxspeed_str, NULL);
   } else {
-    nvgFontFace(s->vg, "sans-semibold");
+    nvgFontFaceId(s->vg, s->font_sans_semibold);
     nvgFontSize(s->vg, 42*2.5);
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
+    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(100));
     nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 242, "N/A", NULL);
   }
 
@@ -539,9 +537,9 @@ static void ui_draw_vision_speedlimit(UIState *s) {
   if (is_speedlim_valid && s->is_ego_over_limit) {
     nvgFillColor(s->vg, nvgRGBA(218, 111, 37, 180));
   } else if (is_speedlim_valid) {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+    nvgFillColor(s->vg, COLOR_WHITE);
   } else {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
+    nvgFillColor(s->vg, COLOR_WHITE_ALPHA(100));
   }
   nvgFill(s->vg);
 
@@ -552,36 +550,36 @@ static void ui_draw_vision_speedlimit(UIState *s) {
     nvgBeginPath(s->vg);
     nvgRoundedRect(s->vg, viz_speedlim_x, viz_speedlim_y, viz_speedlim_w, viz_speedlim_h, 20);
     if (s->is_ego_over_limit) {
-      nvgStrokeColor(s->vg, nvgRGBA(218, 111, 37, 255));
+      nvgStrokeColor(s->vg, COLOR_OCHRE);
     } else if (is_speedlim_valid) {
-      nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 255));
+      nvgStrokeColor(s->vg, COLOR_WHITE);
     }
   }
 
   // Draw "Speed Limit" Text
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  nvgFontFace(s->vg, "sans-semibold");
+  nvgFontFaceId(s->vg, s->font_sans_semibold);
   nvgFontSize(s->vg, 50);
-  nvgFillColor(s->vg, nvgRGBA(0, 0, 0, 255));
+  nvgFillColor(s->vg, COLOR_BLACK);
   if (is_speedlim_valid && s->is_ego_over_limit) {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+    nvgFillColor(s->vg, COLOR_WHITE);
   }
   nvgText(s->vg, viz_speedlim_x+viz_speedlim_w/2 + (is_speedlim_valid ? 6 : 0), viz_speedlim_y + (is_speedlim_valid ? 50 : 45), "SMART", NULL);
   nvgText(s->vg, viz_speedlim_x+viz_speedlim_w/2 + (is_speedlim_valid ? 6 : 0), viz_speedlim_y + (is_speedlim_valid ? 90 : 85), "SPEED", NULL);
 
   // Draw Speed Text
-  nvgFontFace(s->vg, "sans-bold");
+  nvgFontFaceId(s->vg, s->font_sans_bold);
   nvgFontSize(s->vg, 48*2.5);
   if (s->is_ego_over_limit) {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+    nvgFillColor(s->vg, COLOR_WHITE);
   } else {
-    nvgFillColor(s->vg, nvgRGBA(0, 0, 0, 255));
+    nvgFillColor(s->vg, COLOR_BLACK);
   }
   if (is_speedlim_valid) {
     snprintf(speedlim_str, sizeof(speedlim_str), "%d", speedlim_calc);
     nvgText(s->vg, viz_speedlim_x+viz_speedlim_w/2, viz_speedlim_y + (is_speedlim_valid ? 170 : 165), speedlim_str, NULL);
   } else {
-    nvgFontFace(s->vg, "sans-semibold");
+    nvgFontFaceId(s->vg, s->font_sans_semibold);
     nvgFontSize(s->vg, 42*2.5);
     nvgText(s->vg, viz_speedlim_x+viz_speedlim_w/2, viz_speedlim_y + (is_speedlim_valid ? 170 : 165), "N/A", NULL);
   }
@@ -606,14 +604,14 @@ static void ui_draw_vision_speed(UIState *s) {
   } else {
     snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 2.2369363 + 0.5));
   }
-  nvgFontFace(s->vg, "sans-bold");
+  nvgFontFaceId(s->vg, s->font_sans_bold);
   nvgFontSize(s->vg, 96*2.5);
-  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+  nvgFillColor(s->vg, COLOR_WHITE);
   nvgText(s->vg, viz_speed_x+viz_speed_w/2, 240, speed_str, NULL);
 
-  nvgFontFace(s->vg, "sans-regular");
+  nvgFontFaceId(s->vg,  s->font_sans_regular);
   nvgFontSize(s->vg, 36*2.5);
-  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+  nvgFillColor(s->vg, COLOR_WHITE_ALPHA(200));
 
   if (s->is_metric) {
     nvgText(s->vg, viz_speed_x+viz_speed_w/2, 320, "kph", NULL);
@@ -660,7 +658,7 @@ static void ui_draw_vision_event(UIState *s) {
       if (is_engaged) {
         nvgFillColor(s->vg, nvgRGBA(23, 134, 68, 255));
       } else if (is_warning) {
-        nvgFillColor(s->vg, nvgRGBA(218, 111, 37, 255));
+        nvgFillColor(s->vg, COLOR_OCHRE);
       } else if (is_engageable) {
         nvgFillColor(s->vg, nvgRGBA(23, 51, 73, 255));
       }
@@ -771,8 +769,8 @@ void ui_draw_vision_alert(UIState *s, int va_size, int va_color,
   const UIScene *scene = &s->scene;
   int ui_viz_rx = scene->ui_viz_rx;
   int ui_viz_rw = scene->ui_viz_rw;
-  bool hasSidebar = !s->scene.uilayout_sidebarcollapsed;
-  bool mapEnabled = s->scene.uilayout_mapenabled;
+  const bool hasSidebar = !scene->uilayout_sidebarcollapsed;
+  const bool mapEnabled = scene->uilayout_mapenabled;
   bool longAlert1 = strlen(va_text1) > 15;
 
   const uint8_t *color = alert_colors[va_color];
@@ -794,27 +792,27 @@ void ui_draw_vision_alert(UIState *s, int va_size, int va_color,
   nvgRect(s->vg, alr_x, alr_y, alr_w, alr_h);
   nvgFill(s->vg);
 
-  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+  nvgFillColor(s->vg, COLOR_WHITE);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
 
   if (va_size == ALERTSIZE_SMALL) {
-    nvgFontFace(s->vg, "sans-semibold");
+    nvgFontFaceId(s->vg, s->font_sans_semibold);
     nvgFontSize(s->vg, 40*2.5);
     nvgText(s->vg, alr_x+alr_w/2, alr_y+alr_h/2+15, va_text1, NULL);
   } else if (va_size== ALERTSIZE_MID) {
-    nvgFontFace(s->vg, "sans-bold");
+    nvgFontFaceId(s->vg, s->font_sans_bold);
     nvgFontSize(s->vg, 48*2.5);
     nvgText(s->vg, alr_x+alr_w/2, alr_y+alr_h/2-45, va_text1, NULL);
-    nvgFontFace(s->vg, "sans-regular");
+    nvgFontFaceId(s->vg,  s->font_sans_regular);
     nvgFontSize(s->vg, 36*2.5);
     nvgText(s->vg, alr_x+alr_w/2, alr_y+alr_h/2+75, va_text2, NULL);
   } else if (va_size== ALERTSIZE_FULL) {
     nvgFontSize(s->vg, (longAlert1?72:96)*2.5);
-    nvgFontFace(s->vg, "sans-bold");
+    nvgFontFaceId(s->vg, s->font_sans_bold);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
     nvgTextBox(s->vg, alr_x, alr_y+(longAlert1?360:420), alr_w-60, va_text1, NULL);
     nvgFontSize(s->vg, 48*2.5);
-    nvgFontFace(s->vg, "sans-regular");
+    nvgFontFaceId(s->vg,  s->font_sans_regular);
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BOTTOM);
     nvgTextBox(s->vg, alr_x, alr_h-(longAlert1?300:360), alr_w-60, va_text2, NULL);
   }
@@ -876,12 +874,26 @@ static void ui_draw_blank(UIState *s) {
   glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 }
 
+static void ui_draw_background(UIState *s) {
+  int bg_status = s->status;
+  assert(bg_status < ARRAYSIZE(bg_colors));
+  const uint8_t *color = bg_colors[bg_status];
+
+  glClearColor(color[0]/256.0, color[1]/256.0, color[2]/256.0, 1.0);
+  glClear(GL_STENCIL_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+}
+
 void ui_draw(UIState *s) {
+#ifdef QCOM
+  // TODO: once offroad can become transparent, we can remove bg_thread and this
+  ui_draw_blank(s);
+#else
+  ui_draw_background(s);
+#endif
   if (s->vision_connected && s->active_app == cereal_UiLayoutState_App_home && s->status != STATUS_STOPPED) {
     ui_draw_sidebar(s);
     ui_draw_vision(s);
   } else {
-    ui_draw_blank(s);
     if (!s->scene.uilayout_sidebarcollapsed) {
       ui_draw_sidebar(s);
     }

@@ -52,7 +52,7 @@ class UnknownKeyName(Exception):
 
 
 keys = {
-  "AccessToken": [TxType.PERSISTENT],
+  "AccessToken": [TxType.CLEAR_ON_MANAGER_START],
   "AthenadPid": [TxType.PERSISTENT],
   "CalibrationParams": [TxType.PERSISTENT],
   "CarParams": [TxType.CLEAR_ON_MANAGER_START, TxType.CLEAR_ON_PANDA_DISCONNECT],
@@ -78,6 +78,7 @@ keys = {
   "IsTakingSnapshot": [TxType.CLEAR_ON_MANAGER_START],
   "IsUpdateAvailable": [TxType.CLEAR_ON_MANAGER_START],
   "IsUploadRawEnabled": [TxType.PERSISTENT],
+  "LastAthenaPingTime": [TxType.PERSISTENT],
   "LastUpdateTime": [TxType.PERSISTENT],
   "LimitSetSpeed": [TxType.PERSISTENT],
   "LimitSetSpeedNeural": [TxType.PERSISTENT],
