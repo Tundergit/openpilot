@@ -470,6 +470,27 @@ EVENTS = {
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimePrompt, 1., 2., 3.),
   },
+  EventName.pscmHandshaking: {
+    ET.WARNING: Alert(
+      "RELEASE THE WHEEL",
+      "PSCM is handshaking. Please wait...",
+      AlertStatus.userPrompt, AlertSize.mid,
+      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimeWarning1, .4, 2., 3.),
+  },
+  EventName.pscmHandshaked: {
+    ET.PRE_ENABLE: Alert(
+      "PSCM has successfully handshaked",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOWEST, VisualAlert.none, AudibleAlert.none, .0, .0, .1),
+  },
+  EventName.pscmLostHandshake: {
+    ET.WARNING: Alert(
+      "RELEASE THE WHEEL",
+      "Handshake lost. Please wait for handshake to occur",
+      AlertStatus.userPrompt, AlertSize.mid,
+      Priority.LOW, VisualAlert.steerRequired, AudibleAlert.chimeWarning1, .4, 2., 3.),
+  },
 
   # ********** events that affect controls state transitions **********
 
