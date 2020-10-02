@@ -65,9 +65,12 @@ class CarState(CarStateBase):
     self.ipmaNo = cp.vl["Lane_Keep_Assist_Ui"]['FeatNoIpmaActl']
     self.laDenyStat = cp.vl["Lane_Keep_Assist_Ui"]['LaDenyStats_B_Dsply']
     self.ipmaStats = cp.vl["Lane_Keep_Assist_Ui"]['CamraStats_D_Dsply']
+    #APA Stuff
     self.sappHandshake = cp.vl["EPAS_INFO"]['SAPPAngleControlStat1']
     self.sappConfig = cp.vl["ParkAid_Data"]['SAPPStatusCoding']
     self.angleStat = cp.vl["ParkAid_Data"]['EPASExtAngleStatReq']
+    #Speed
+    self.vehSpeed = cp.vl["EngVehicleSpThrottle2"]['Veh_V_ActlEng']
     return ret
 
   @staticmethod
@@ -116,6 +119,7 @@ class CarState(CarStateBase):
     ("SAPPAngleControlStat1", "EPAS_INFO", 0.),
     ("SAPPStatusCoding", "ParkAid_Data", 0.),
     ("EPASExtAngleStatReq", "ParkAid_Data", 0.),
+    ("Veh_V_ActlEng", "EngVehicleSpThrottle2", 0.),
     ]
     
     checks = []
