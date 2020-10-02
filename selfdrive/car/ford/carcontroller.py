@@ -48,7 +48,7 @@ class CarController():
     apply_steer = actuators.steerAngle
     if self.enable_camera:
       if pcm_cancel:
-       print("CANCELING!!!!")
+       #print("CANCELING!!!!")
        can_sends.append(spam_cancel_button(self.packer))
       if (frame % 1) == 0:
         self.main_on_last = CS.out.cruiseState.available
@@ -111,7 +111,11 @@ class CarController():
         can_sends.append(create_steer_command(self.packer, apply_steer, enabled, CS.out.steeringAngle, self.lkas_action, self.angleReq_last, self.sappConfig_last, self.sappChime))
         self.generic_toggle_last = CS.out.genericToggle
       if (frame % 1) == 0 or (self.enabled_last != enabled) or (self.main_on_last != CS.out.cruiseState.available) or (self.steer_alert_last != steer_alert):
-        can_sends.append(create_lkas_ui(self.packer, CS.out.cruiseState.available, enabled, steer_alert, CS.ipmaHeater, CS.ahbcCommanded, CS.ahbcRamping, CS.ipmaConfig, CS.ipmaNo, CS.ipmaStats))
+        if steer_alert:
+          steer_chime = 2
+        else:
+          steer_chime = 0
+        can_sends.append(create_lkas_ui(self.packer, CS.out.cruiseState.available, enabled, steer_chime, CS.ipmaHeater, CS.ahbcCommanded, CS.ahbcRamping, CS.ipmaConfig, CS.ipmaNo, CS.ipmaStats))
         self.enabled_last = enabled                         
       self.steer_alert_last = steer_alert
 
