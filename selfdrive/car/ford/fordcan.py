@@ -23,6 +23,12 @@ def create_steer_command(packer, angle_cmd, enabled, angle_steers, lkas_action, 
   }
   return packer.make_can_msg("ParkAid_Data", 0, values)
 
+def create_speed_command(packer, speed):
+  """Creates a CAN message for the Ford Speed Command."""
+  values = {
+    "Veh_V_ActlEng": speed
+  }
+  return packer.make_can_msg("EngVehicleSpThrottle2", 0, values)
 #def create_lkas_status(packer, enabled, lkasState, steer_pressed, steer_error):
 #  """Creates a CAN message for the Ford LKAS State"""
 #  values = {
