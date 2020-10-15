@@ -2,7 +2,7 @@ from cereal import car
 import numpy as np
 from common.numpy_fast import interp, clip
 from selfdrive.car import make_can_msg
-from selfdrive.car.ford.fordcan import create_steer_command, create_lkas_ui, spam_cancel_button
+from selfdrive.car.ford.fordcan import create_steer_command, create_speed_command, create_lkas_ui, spam_cancel_button
 from opendbc.can.packer import CANPacker
 
 
@@ -40,16 +40,16 @@ class CarController():
 
     can_sends = []
     steer_alert = visual_alert == car.CarControl.HUDControl.VisualAlert.steerRequired
-    #if (frame % 50) == 0:
-    #  if CS.out.genericToggle == 1:
-    #    self.lkasToggle += 1
-    #  if self.lkasToggle > 6:
-    #    self.lkasToggle = 1
     apply_steer = actuators.steerAngle
     if self.enable_camera:
+      if enabled:
+        self.speed = 0
+      if not enabled:
+        self.speed = CS.vehSpeed
+      can_sends.append(create_speed_command(self.packer, self.speed))
       if pcm_cancel:
        #print("CANCELING!!!!")
-       can_sends.append(spam_cancel_button(self.packer))
+        can_sends.append(spam_cancel_button(self.packer))
       if (frame % 1) == 0:
         self.main_on_last = CS.out.cruiseState.available
       #SAPP Config Value Handshake
@@ -125,10 +125,10 @@ class CarController():
         self.generic_toggle_last = CS.out.genericToggle
       if (frame % 1) == 0 or (self.enabled_last != enabled) or (self.main_on_last != CS.out.cruiseState.available) or (self.steer_alert_last != steer_alert):
         if steer_alert:
-          steer_chime = 2
+          self.steer_chime = 2
         else:
-          steer_chime = 0
-        can_sends.append(create_lkas_ui(self.packer, CS.out.cruiseState.available, enabled, steer_chime, CS.ipmaHeater, CS.ahbcCommanded, CS.ahbcRamping, CS.ipmaConfig, CS.ipmaNo, CS.ipmaStats))
+          self.steer_chime = 0
+        can_sends.append(create_lkas_ui(self.packer, CS.out.cruiseState.available, enabled, self.steer_chime, CS.ipmaHeater, CS.ahbcCommanded, CS.ahbcRamping, CS.ipmaConfig, CS.ipmaNo, CS.ipmaStats))
         self.enabled_last = enabled                         
       self.steer_alert_last = steer_alert
 
