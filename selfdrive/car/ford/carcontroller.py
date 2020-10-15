@@ -54,39 +54,52 @@ class CarController():
         self.main_on_last = CS.out.cruiseState.available
       #SAPP Config Value Handshake
       if (frame % 2) == 0:
-        if CS.out.vEgo >= 0:
-          self.apaCounter += 1
-          if self.sappConfig_last != 16:
-            self.sappConfig = 70 #168 perpendicular
-          #if self.apaCounter == 6:
-          #  self.sappConfig = 168
+        if not enabled:
+          self.apaCounter = 0
+          self.eightysix = 0
+          self.angleReq = 0
+          self.sappAction = 0
+        if enabled:
+          self.apaCounter += 1 #Increment counter 
+          #Sets config to base value when init handshake
+          if CS.sappHandshake != 2 and self.sappConfig_last != 16:
+            events.add(car.CarEvent.EventName.pscmHandshaking)
+          if CS.sappHandshake == 0 and self.sappConfig_last not in [16, 86, 224] :
+            self.sappConfig = 70
+          #waits for the pscm to respond, and waits 8 frames as well. sets config to response
           if CS.sappHandshake == 1 and self.apaCounter > 8:
-            self.sappConfig = 86 #200 perpendicular
+            self.sappConfig = 86
             self.eightysix += 1
             print("config 86")
+          #waits 5 frames then sends the angle request
           if CS.sappHandshake == 1 and self.apaCounter > 13 and self.sappConfig_last == 86:
             self.angleReq = 1
             print("angle 1")
+          #when 20 frames have passed at response config, values are cleared and angle request is held
           if self.sappConfig_last == 86 and self.eightysix == 20:
             self.apaCounter = 0
             self.eightysix = 0
+            self.angleReq = 1
+          #pscm responds to handshake. config is set to parallel action. 
           if CS.sappHandshake == 2 and self.sappConfig_last != 16: # and self.apaCounter in range (15,16):
             self.sappConfig = 224
+            self.angleReq = 1
             self.sappAction += 1
             print("config 224 angle 1")
+          #once action is held for 3 frames, final response is sent. pscm is handshaken
           if CS.sappHandshake == 2 and self.sappAction >= 3 and self.sappConfig_last == 224:
             self.sappConfig = 16
+            self.angleReq = 1
             print("config 16 angle 1")
+            events.add(car.CarEvent.EventName.pscmHandshaked)
+          #if pscm faults, values reset to retry. 
           if CS.sappHandshake == 3:
+            events.add(car.CarEvent.EventName.pscmLostHandshake)
             self.sappConfig = 0
             self.apaCounter = 0
+            self.angleReq = 0
         self.sappConfig_last = self.sappConfig
         self.angleReq_last = self.angleReq
-        #if CS.out.vEgo >= 1:
-        #  self.apaCounter = 0 
-        #  if CS.sappHandshake == 2 and self.sappConfig_last == 16:
-        #    self.sappConfig = 16
-        #    self.angleReq = 1
         print("Handshake:", CS.sappHandshake, "Config:", self.sappConfig_last, "Counter:", self.apaCounter, "AngleRequest:", self.angleReq, "fwdAction:", self.sappAction)
       #Stock IPMA Message is 33Hz. PSCM accepts commands at max 44Hz. 
         curvature = self.vehicle_model.calc_curvature(actuators.steerAngle*np.pi/180., CS.out.vEgo)
