@@ -109,7 +109,7 @@ class CarState(CarStateBase):
     ]
     
     checks = []
-    return CANParser(DBC[CP.carFingerprint]['pt'], signals, 0)
+    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
   
   @staticmethod
   def get_cam_can_parser(CP):
