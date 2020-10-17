@@ -8,7 +8,7 @@ from selfdrive.car.ford.values import DBC, SPEED_FACTOR
 GearShifter = car.CarState.GearShifter
   
 class CarState(CarStateBase):
-  def update(self, cp):
+  def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
     speed_factor = SPEED_FACTOR[self.CP.carFingerprint]
     ret.wheelSpeeds.rr = cp.vl["WheelSpeed"]['WhlRr_W_Meas'] * CV.MPH_TO_MS
