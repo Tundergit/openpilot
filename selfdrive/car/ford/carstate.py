@@ -84,9 +84,6 @@ class CarState(CarStateBase):
     ("SteWhlRelInit_An_Sns", "Steering_Wheel_Data_CG1", 0.),
     ("Cruise_State", "Cruise_Status", 0.),
     ("Set_Speed", "Cruise_Status", 0.),
-    ("LaActAvail_D_Actl", "Lane_Keep_Assist_Status", 0),
-    ("LaHandsOff_B_Actl", "Lane_Keep_Assist_Status", 0),
-    ("LaActDeny_B_Actl", "Lane_Keep_Assist_Status", 0),
     ("ApedPosScal_Pc_Actl", "EngineData_14", 0.),
     ("Dist_Incr", "Steering_Buttons", 0.),
     ("Lane_Keep_Toggle", "Steering_Buttons", 0.),
@@ -103,18 +100,9 @@ class CarState(CarStateBase):
     ("Door_RR_Open", "Doors", 0.),
     ("GearLvrPos_D_Actl", "TransGearData", 0.),
     ("FirstRowBuckleDriver", "RCMStatusMessage2_FD1", 0.),
-    ("LatCtlLim_D_Stat", "Lane_Keep_Assist_Status", 0.),
     ("SodDetctLeft_D_Stat", "Side_Detect_L_Stat", 0.),
     ("SodDetctRight_D_Stat", "Side_Detect_R_Stat", 0.),
-    ("AhbHiBeam_D_Rq", "Lane_Keep_Assist_Ui", 0.),
-    ("CamraDefog_B_Req", "Lane_Keep_Assist_Ui", 0.),
-    ("AhbcRampingV_D_Rq", "Lane_Keep_Assist_Ui", 0.),
     ("FcwVisblWarn_B_Rq", "ACCDATA_3", 0.),
-    ("FeatConfigIpmaActl", "Lane_Keep_Assist_Ui", 0.),
-    ("FeatNoIpmaActl", "Lane_Keep_Assist_Ui", 0.),
-    ("LaDenyStats_B_Dsply", "Lane_Keep_Assist_Ui", 0.),
-    ("CamraStats_D_Dsply", "Lane_Keep_Assist_Ui", 0.),
-    ("Lane_Curvature", "Lane_Keep_Assist_Control", 0.),
     ("SAPPStatusCoding", "ParkAid_Data", 0.),
     ("EPASExtAngleStatReq", "ParkAid_Data", 0.),
     ("Veh_V_ActlEng", "EngVehicleSpThrottle2", 0.),
@@ -123,12 +111,23 @@ class CarState(CarStateBase):
     checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
   
- @staticmethod
+  @staticmethod
   def get_cam_can_parser(CP):
     signals = [
     # sig_name, sig_address, default
     ("SAPPAngleControlStat1", "EPAS_INFO", 0.),
     ("SteeringColumnTorque", "EPAS_INFO", 0.),
-      
+    ("FeatConfigIpmaActl", "Lane_Keep_Assist_Ui", 0.),
+    ("FeatNoIpmaActl", "Lane_Keep_Assist_Ui", 0.),
+    ("LaDenyStats_B_Dsply", "Lane_Keep_Assist_Ui", 0.),
+    ("CamraStats_D_Dsply", "Lane_Keep_Assist_Ui", 0.),
+    ("Lane_Curvature", "Lane_Keep_Assist_Control", 0.),
+    ("AhbHiBeam_D_Rq", "Lane_Keep_Assist_Ui", 0.),
+    ("CamraDefog_B_Req", "Lane_Keep_Assist_Ui", 0.),
+    ("AhbcRampingV_D_Rq", "Lane_Keep_Assist_Ui", 0.),
+    ("LatCtlLim_D_Stat", "Lane_Keep_Assist_Status", 0.),
+    ("LaActAvail_D_Actl", "Lane_Keep_Assist_Status", 0),
+    ("LaHandsOff_B_Actl", "Lane_Keep_Assist_Status", 0),
+    ("LaActDeny_B_Actl", "Lane_Keep_Assist_Status", 0),
     ]
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
