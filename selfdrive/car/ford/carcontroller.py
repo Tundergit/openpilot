@@ -63,7 +63,7 @@ class CarController():
           self.apaCounter += 1 #Increment counter 
           #Sets config to base value when init handshake
           if CS.sappHandshake != 2 and self.sappConfig_last != 16:
-            events.add(car.CarEvent.EventName.pscmHandshaking)
+            #events.add(car.CarEvent.EventName.pscmHandshaking)
           if CS.sappHandshake == 0 and self.sappConfig_last not in [16, 86, 224] :
             self.sappConfig = 70
           #waits for the pscm to respond, and waits 8 frames as well. sets config to response
@@ -91,10 +91,10 @@ class CarController():
             self.sappConfig = 16
             self.angleReq = 1
             print("config 16 angle 1")
-            events.add(car.CarEvent.EventName.pscmHandshaked)
+            #events.add(car.CarEvent.EventName.pscmHandshaked)
           #if pscm faults, values reset to retry. 
           if CS.sappHandshake == 3:
-            events.add(car.CarEvent.EventName.pscmLostHandshake)
+            #events.add(car.CarEvent.EventName.pscmLostHandshake)
             self.sappConfig = 0
             self.apaCounter = 0
             self.angleReq = 0
