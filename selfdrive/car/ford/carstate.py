@@ -109,7 +109,7 @@ class CarState(CarStateBase):
     ]
     
     checks = []
-    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
+    return CANParser(DBC[CP.carFingerprint]['pt'], signals, 0)
   
   @staticmethod
   def get_cam_can_parser(CP):
@@ -130,4 +130,4 @@ class CarState(CarStateBase):
     ("LaHandsOff_B_Actl", "Lane_Keep_Assist_Status", 0),
     ("LaActDeny_B_Actl", "Lane_Keep_Assist_Status", 0),
     ]
-    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
+    return CANParser(DBC[CP.carFingerprint]['pt'], signals, 2)
