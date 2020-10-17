@@ -101,7 +101,6 @@ class CarState(CarStateBase):
     ("Door_FR_Open", "Doors", 0.),
     ("Door_RL_Open", "Doors", 0.),
     ("Door_RR_Open", "Doors", 0.),
-    ("SteeringColumnTorque", "EPAS_INFO", 0.),
     ("GearLvrPos_D_Actl", "TransGearData", 0.),
     ("FirstRowBuckleDriver", "RCMStatusMessage2_FD1", 0.),
     ("LatCtlLim_D_Stat", "Lane_Keep_Assist_Status", 0.),
@@ -116,7 +115,6 @@ class CarState(CarStateBase):
     ("LaDenyStats_B_Dsply", "Lane_Keep_Assist_Ui", 0.),
     ("CamraStats_D_Dsply", "Lane_Keep_Assist_Ui", 0.),
     ("Lane_Curvature", "Lane_Keep_Assist_Control", 0.),
-    ("SAPPAngleControlStat1", "EPAS_INFO", 0.),
     ("SAPPStatusCoding", "ParkAid_Data", 0.),
     ("EPASExtAngleStatReq", "ParkAid_Data", 0.),
     ("Veh_V_ActlEng", "EngVehicleSpThrottle2", 0.),
@@ -124,3 +122,13 @@ class CarState(CarStateBase):
     
     checks = []
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
+  
+ @staticmethod
+  def get_cam_can_parser(CP):
+    signals = [
+    # sig_name, sig_address, default
+    ("SAPPAngleControlStat1", "EPAS_INFO", 0.),
+    ("SteeringColumnTorque", "EPAS_INFO", 0.),
+      
+    ]
+    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 2)
