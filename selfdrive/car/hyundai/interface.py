@@ -32,10 +32,10 @@ class CarInterface(CarInterfaceBase):
     # Most Hyundai car ports are community features for now
     ret.communityFeature = candidate not in [CAR.SONATA, CAR.PALISADE]
 
-    ret.steerActuatorDelay = 0.4  # Default delay
-    ret.steerRateCost = 0.5
-    ret.steerLimitTimer = 0.1
-    tire_stiffness_factor = 0.7
+    ret.steerActuatorDelay = 0.08  # Default delay 2021 Stinger
+    ret.steerRateCost = 1.0
+    ret.steerLimitTimer = 0.4
+    tire_stiffness_factor = 1.125
 
     #Long tuning Params -  make individual params for cars, baseline Hyundai genesis
     ret.longitudinalTuning.kpBP = [0., 1., 10., 35.]
@@ -60,9 +60,9 @@ class CarInterface(CarInterfaceBase):
 
     if opParams().get('Enable_INDI'):
       ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 3.5  #stock is 3.0 but 4.0 seems good
-      ret.lateralTuning.indi.outerLoopGain = 2.5  #stock is 2.0.  Trying out 2.5
-      ret.lateralTuning.indi.timeConstant = 1.4  #Stock is 1.5.  1.3 is good
+      ret.lateralTuning.indi.innerLoopGain = 3.  #stock is 3.0 but 4.0 seems good
+      ret.lateralTuning.indi.outerLoopGain = 2.  #stock is 2.0.  Trying out 2.5
+      ret.lateralTuning.indi.timeConstant = 1.  #Stock is 1.5.  1.3 is good
       ret.lateralTuning.indi.actuatorEffectiveness = 2.  #Stock is 1.0 1.4 is good
 
     if candidate in [CAR.SANTA_FE, CAR.SANTA_FE_2017]:
@@ -124,6 +124,15 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = 2.80
       ret.steerRatio = 13.75 * 1.15
     elif candidate == CAR.KIA_STINGER: # ^^^^^^^^^^^^^^^^^ STINGER ^^^^^^^^^^^^^^^^^^^^^^^
+      ret.lateralTuning.init('indi')
+      ret.lateralTuning.indi.innerLoopGain = 3.  #stock is 3.0 but 4.0 seems good
+      ret.lateralTuning.indi.outerLoopGain = 2.  #stock is 2.0.  Trying out 2.5
+      ret.lateralTuning.indi.timeConstant = 1.  #Stock is 1.5.  1.3 is good
+      ret.lateralTuning.indi.actuatorEffectiveness = 2.  #Stock is 1.0 1.4 is good
+      ret.steerActuatorDelay = 0.08 # Stinger GT Limited AWD 3.3T stock value (Tunder's 2020) 
+      ret.steerLimitTimer = 0.4 # stock is 0.01, 0.4 works well, trying 0.2, 0.1 for quicker turn in.  0.1 is strong on highway, notchy in town
+      tire_stiffness_factor = 1.125 # LiveParameters (Tunder's 2020)
+      ret.steerRateCost = 1.0
       ret.mass = 1825. + STD_CARGO_KG
       ret.wheelbase = 2.906
       ret.steerRatio = 14.4
