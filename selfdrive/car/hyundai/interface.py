@@ -60,8 +60,8 @@ class CarInterface(CarInterfaceBase):
 
     if opParams().get('Enable_INDI'):
       ret.lateralTuning.init('indi')
-      ret.lateralTuning.indi.innerLoopGain = 3.1  #stock is 3.0 but 4.0 seems good
-      ret.lateralTuning.indi.outerLoopGain = 2.1  #stock is 2.0.  Trying out 2.5
+      ret.lateralTuning.indi.innerLoopGain = 3.5  #stock is 3.0 but 4.0 seems good
+      ret.lateralTuning.indi.outerLoopGain = 2.5  #stock is 2.0.  Trying out 2.5
       ret.lateralTuning.indi.timeConstant = 1.4  #Stock is 1.5.  1.3 is good
       ret.lateralTuning.indi.actuatorEffectiveness = 2.  #Stock is 1.0 1.4 is good
 
@@ -123,10 +123,10 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 3558. * CV.LB_TO_KG
       ret.wheelbase = 2.80
       ret.steerRatio = 13.75 * 1.15
-    elif candidate == CAR.KIA_STINGER:
+    elif candidate == CAR.KIA_STINGER: # ^^^^^^^^^^^^^^^^^ STINGER ^^^^^^^^^^^^^^^^^^^^^^^
       ret.mass = 1825. + STD_CARGO_KG
-      ret.wheelbase = 2.78
-      ret.steerRatio = 14.4 * 1.15
+      ret.wheelbase = 2.906
+      ret.steerRatio = 14.4
     elif candidate == CAR.KONA:
       ret.mass = 1275. + STD_CARGO_KG
       ret.wheelbase = 2.7
