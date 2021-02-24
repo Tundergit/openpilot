@@ -16,7 +16,7 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-   # self.frame = int(cp.vl["EPS_STATUS"]['COUNTER']) THIS IS THE COUNTER I AM UNSURE OF (SEE BELOW)
+    self.frame = int(cp.vl["FORWARD_CAMERA_LKAS"]['COUNTER']) #THIS COUNTER I AM UNSURE OF 
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_LF'],
                         cp.vl["DOORS"]['DOOR_OPEN_RF'],
@@ -60,7 +60,7 @@ class CarState(CarStateBase):
 
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
-   # self.lkas_counter = cp_cam.vl["LKAS_COMMAND"]['COUNTER']
+    self.lkas_counter = cp_cam.vl["FORWARD_CAMERA_LKAS"]['COUNTER'] #UNSURE OF THIS COUNTER
    # self.lkas_car_model = cp_cam.vl["LKAS_HUD"]['CAR_MODEL']
    # self.lkas_status_ok = cp_cam.vl["LKAS_HEARTBIT"]['LKAS_STATUS_OK']
 
@@ -93,9 +93,10 @@ class CarState(CarStateBase):
       ("TORQUE_DRIVER", "EPS_2", 0),
       ("TORQUE_MOTOR", "EPS_1", 0),
       ("LKAS_CONTROL_BIT", "FORWARD_CAMERA_LKAS", 1),
-      #("COUNTER", "EPS_STATUS", -1),    THERE ARE MANY COUNTERS NOT SURE WHICH ONE I NEED HERE, MAYBE NEED TO SEE WHERE ITS USED TO KNOW WHAT IT IS
+      ("COUNTER", "EPS_2", -1),  #  THERE ARE MANY COUNTERS NOT SURE WHICH ONE I NEED HERE, MAYBE NEED TO SEE WHERE ITS USED TO KNOW WHAT IT IS
       ("TRAC_OFF", "CENTER_STACK", 0),
       ("DRIVER_SEATBELT_STATUS", "DRIVER_SEATBELT_STATUS", 0),
+      ("FORWARD_CAMERA_HUD", "LKAS_HUD", 0),
     ]
 
     checks = [
@@ -109,11 +110,11 @@ class CarState(CarStateBase):
       ("FORWARD_CAMERA_LKAS", 50),
       ("SHIFTER_ASSM", 50),
       ("GAS_PEDAL", 50),
-     # ("DASHBOARD", 15),
       ("STEERING_LEVERS", 10),
       ("DRIVER_SEATBELT_STATUS", 1),
       ("DOORS", 1),
       ("CENTER_STACK", 20),
+      ("FORWARD_CAMERA_HUD", 20),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
@@ -121,7 +122,7 @@ class CarState(CarStateBase):
   @staticmethod
   def get_cam_can_parser(CP):
     signals = [
-      # sig_name, sig_address, default
+      # sig_name, sig_address, default NEED TO GET THIS DONE STILL! vv 
       ("COUNTER", "LKAS_COMMAND", -1),
       ("CAR_MODEL", "LKAS_HUD", -1),
       ("LKAS_STATUS_OK", "LKAS_HEARTBIT", -1)
