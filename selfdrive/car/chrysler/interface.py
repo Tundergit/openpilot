@@ -33,14 +33,14 @@ class CarInterface(CarInterfaceBase):
     ret.steerRateCost = 0.7
     ret.steerLimitTimer = 0.4
 
-    if candidate in (CAR.JEEP_CHEROKEE, CAR.JEEP_CHEROKEE_2019):
-      ret.wheelbase = 2.91  # in meters
-      ret.steerRatio = 12.7
+    if candidate in (CAR.RAM_1500_2021):
+      ret.wheelbase = 3.88  # in meters
+      ret.steerRatio = 16.3
       ret.steerActuatorDelay = 0.2  # in seconds
 
     ret.centerToFront = ret.wheelbase * 0.44
 
-    ret.minSteerSpeed = 3.8  # m/s
+    ret.minSteerSpeed = 17.5  # m/s
     if candidate in (CAR.PACIFICA_2019_HYBRID, CAR.PACIFICA_2020, CAR.JEEP_CHEROKEE_2019):
       # TODO allow 2019 cars to steer down to 13 m/s if already engaged.
       ret.minSteerSpeed = 17.5  # m/s 17 on the way up, 13 on the way down once engaged.

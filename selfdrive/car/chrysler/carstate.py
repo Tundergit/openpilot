@@ -97,6 +97,13 @@ class CarState(CarStateBase):
       ("TRAC_OFF", "CENTER_STACK", 0),
       ("DRIVER_SEATBELT_STATUS", "DRIVER_SEATBELT_STATUS", 0),
       ("FORWARD_CAMERA_HUD", "LKAS_HUD", 0),
+      ("CANCEL", "WHEEL_BUTTONS_CRUISE_CONTROL", 0),
+      ("SET_MINUS", "WHEEL_BUTTONS_CRUISE_CONTROL", 0),
+      ("SET_PLUS", "WHEEL_BUTTONS_CRUISE_CONTROL", 0),
+      ("RESUME", "WHEEL_BUTTONS_CRUISE_CONTROL", 0),
+      ("CRUISE_CONTROL", "WHEEL_BUTTONS_CRUISE_CONTROL", 0),
+
+
     ]
 
     checks = [
@@ -115,6 +122,7 @@ class CarState(CarStateBase):
       ("DOORS", 1),
       ("CENTER_STACK", 20),
       ("FORWARD_CAMERA_HUD", 20),
+      ("WHEEL_BUTTONS_CRUISE_CONTROL", 50),
     ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
