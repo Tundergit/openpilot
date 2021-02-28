@@ -16,7 +16,7 @@ class CarState(CarStateBase):
 
     ret = car.CarState.new_message()
 
-    self.frame = int(cp.vl["FORWARD_CAMERA_LKAS"]['COUNTER']) #THIS COUNTER I AM UNSURE OF 
+    self.frame = int(cp.vl["FORWARD_CAMERA_LKAS"]['COUNTER']) #THIS COUNTER I AM UNSURE OF - it's ok, just need one that runs at 100hz
 
     ret.doorOpen = any([cp.vl["DOORS"]['DOOR_OPEN_LF'],
                         cp.vl["DOORS"]['DOOR_OPEN_RF'],
@@ -24,11 +24,11 @@ class CarState(CarStateBase):
                         cp.vl["DOORS"]['DOOR_OPEN_RR']])
     ret.seatbeltUnlatched = cp.vl["DRIVER_SEATBELT_STATUS"]['DRIVER_SEATBELT_STATUS'] == 1
 
-    ret.brakePressed = cp.vl["BRAKE_PEDAL"]['BRK_PEDAL'] > 1  # human-only
+    ret.brakePressed = cp.vl["BRAKE_PEDAL"]['BRK_PEDAL'] > 1  # human-only... TODO: find values when ACC uses brakes - might have been lucky
     ret.brake = 0
-   # ret.brakeLights = ret.brakePressed I DON'T BELIEVE WE HAVE BRAKE LIGHT SIGNAL
+    ret.brakeLights = ret.brakePressed # I DON'T BELIEVE WE HAVE BRAKE LIGHT SIGNAL - brakePressed is ok for now
     ret.gas = cp.vl["GAS_PEDAL"]['THROTTLE_POSITION']
-    ret.gasPressed = ret.gas > 1e-5 
+    ret.gasPressed = ret.gas > 1 
 
     ret.espDisabled = (cp.vl["CENTER_STACK"]['TRAC_OFF'] == 1)
 
@@ -36,8 +36,8 @@ class CarState(CarStateBase):
     ret.wheelSpeeds.rr = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RR']
     ret.wheelSpeeds.rl = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LR']
     ret.wheelSpeeds.fr = cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RF']
-  #  ret.vEgoRaw = (cp.vl['SPEED_1']['SPEED_LEFT'] + cp.vl['SPEED_1']['SPEED_RIGHT']) / 2. WE DON'T GET THESE SPEEDS, BUT COULD USE WHEEL SPEEDS HERE
-  #  ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
+    ret.vEgoRaw = (cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_LF'] + cp.vl['WHEEL_SPEEDS']['WHEEL_SPEED_RR']) / 2.
+    ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
     ret.standstill = not ret.vEgoRaw > 0.001
 
     ret.leftBlinker = cp.vl["STEERING_LEVERS"]['TURN_SIGNALS'] == 1
@@ -47,16 +47,16 @@ class CarState(CarStateBase):
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(cp.vl['SHIFTER_ASSM']['SHIFTER_POSITION'], None))
 
     ret.cruiseState.enabled = cp.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 3  # ACC is green.
-    ret.cruiseState.available = ret.cruiseState.enabled  # FIXME: for now same as enabled
+    ret.cruiseState.available = cp.vl["FORWARD_CAMERA_ACC"]['ACC_STATUS'] == 1 # ACC is white... right???   
     ret.cruiseState.speed = cp.vl["FORWARD_CAMERA_CLUSTER"]['ACC_SPEED_SET_SPEED'] * CV.KPH_TO_MS
     # CRUISE_STATE is a three bit msg, 0 is off, 1 and 2 are Non-ACC mode, 3 and 4 are ACC mode, find if there are other states too
-   # ret.cruiseState.nonAdaptive = cp.vl["DASHBOARD"]['CRUISE_STATE'] in [1, 2]
+   # ret.cruiseState.nonAdaptive = cp.vl["DASHBOARD"]['CRUISE_STATE'] in [1, 2]  do we need this at all?  
 
     ret.steeringTorque = cp.vl["EPS_2"]["TORQUE_DRIVER"]
     ret.steeringTorqueEps = cp.vl["EPS_1"]["TORQUE_MOTOR"]
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
-    steer_state = cp.vl["FORWARD_CAMERA_LKAS"]["LKAS_CONTROL_BIT"]
-    ret.steerError = steer_state == 4 or (steer_state == 0 and ret.vEgo > self.CP.minSteerSpeed)
+    steer_state = cp.vl["EPS_2"]["EPS_STATUS"]
+    ret.steerError = steer_state == 0 or (steer_state == 0 and ret.vEgo > self.CP.minSteerSpeed)
 
     ret.genericToggle = bool(cp.vl["STEERING_LEVERS"]['HIGH_BEAM_FLASH'])
 
